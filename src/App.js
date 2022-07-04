@@ -20,6 +20,9 @@ class App extends Component {
         <General></General>
         <Education></Education>
         <Practical></Practical>
+        <footer>
+          Created by James Luong (2022)
+        </footer>
       </div>
     );
   }
