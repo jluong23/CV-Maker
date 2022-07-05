@@ -33,27 +33,39 @@ class Education extends Component {
       dateOfStudy: "",
     }
     this.setState({
-      experiences: this.state.experiences.concat(newExp)
+      experiences: this.state.experiences.concat(newExp),
+      experience: newExp
     })
   }
 
-  onEditExperience = (e, id) => {
+  onEditExperience = (e, experienceId) => {
     e.preventDefault();
+
+    // update currently editing experience id
+    this.setState({ 
+      experience: {
+        id: experienceId,
+      }
+    })
     if(this.state.edit){
-      //save results of edit form in state
+      // if applying the update (pressing save rather than edit), save results of edit in state
+      let editedExperience = {
+        id: experienceId,
+        schoolName: e.target.schoolName.value,
+        titleOfStudy: e.target.titleOfStudy.value,
+        dateOfStudy: e.target.dateOfStudy.value,
+      }
       this.setState({
-        experience: {
-          schoolName: e.target.schoolName.value,
-          titleOfStudy: e.target.titleOfStudy.value,
-          dateOfStudy: e.target.dateOfStudy.value,
-        },
+        experience: editedExperience
       });
-      debugger;
+
+      // update experiences array
       var newExperiences = this.state.experiences.slice();
-      let index = newExperiences.findIndex((exp) => exp.id === id);
-      newExperiences[index] = this.state.experience;
+      let index = newExperiences.findIndex((exp) => exp.id === experienceId);
+      newExperiences[index] = editedExperience;
       this.setExperiences(newExperiences);
     }
+
     // flip boolean of edit mode state
     this.setState({
       edit: !this.state.edit,
@@ -61,15 +73,16 @@ class Education extends Component {
   }
 
   // a generic edit form for the current experience in state
-  createEditForm = () => {
+  createEditForm = (id) => {
+    let experience = this.state.experiences.find((exp) => exp.id === id);
     return (
-      <form onSubmit= {(e) => {this.onEditExperience(e, this.state.experience.id)}}>
+      <form onSubmit= {(e) => {this.onEditExperience(e, experience.id)}}>
         <label htmlFor="schoolName">School Name: </label>
-        <input type="text" name="schoolName" defaultValue={this.state.experience.schoolName}/>
+        <input type="text" name="schoolName" defaultValue={experience.schoolName}/>
         <label htmlFor="titleOfStudy">Title of Study: </label>
-        <input type="text" name="titleOfStudy" defaultValue={this.state.experience.titleOfStudy}/>
+        <input type="text" name="titleOfStudy" defaultValue={experience.titleOfStudy}/>
         <label htmlFor="dateOfStudy">Date of Study: </label>
-        <input type="date" name="dateOfStudy" defaultValue={this.state.experience.dateOfStudy}/>
+        <input type="date" name="dateOfStudy" defaultValue={experience.dateOfStudy}/>
         <button type="submit">
             Save
         </button>
@@ -105,7 +118,7 @@ class Education extends Component {
     return(
       <div>
         <h2>Section 2 - Education Experience</h2>
-        {this.state.edit ? this.createEditForm() : overview}
+        {this.state.edit ? this.createEditForm(this.state.experience.id) : overview}
       </div>
     );
   }
